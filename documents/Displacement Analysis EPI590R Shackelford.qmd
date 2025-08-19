@@ -8,8 +8,58 @@ execute:
   echo: false
 ---
 
-## Description of Data
 
+```{r}
+displaced <- readRDS(here::here("data", "refugees.rds"))
+```
+
+## Introduction to data
+This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRWA, and the IDMC, but I downloaded it from TidyTuesday.
+
+*A quick brief on terminology:*
+
+-Asylum seeker: a person who has applied or attends to apply for refugee status.
+
+-Refugee: someone who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).
+
+-Internally displaced person (IDP): a person displaced within their home country (for any reason, including disasters).
+
+## Displacement over time
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+year <- displaced |> group_by(year) |> summarise(refugees = sum(refugees, na.rm = TRUE), asylum = sum(asylum_seekers, na.rm = TRUE), idps = sum(idps, na.rm = TRUE))
+summary(displaced)
+sum(displaced$refugees)
+sum(displaced$asylum_seekers)
+sum(displaced$idps)
+summary(year)
+sum(year$refugees)
+sum(year$asylum)
+sum(year$idps)
+
+long_totals <- year %>%
+  pivot_longer(cols = c(refugees, asylum, idps),
+               names_to = "type",
+               values_to = "count")
+
+ggplot(long_totals, aes(x = year, y = count, color = type)) +
+  geom_line(size = 1) +
+  labs(
+    title = "Displacement Trends, 2010-2022",
+    x = "Year",
+    y = "Number of People",
+    color = "Displacement Type"
+  ) +
+  scale_x_continuous(
+  breaks = seq(min(long_totals$year), max(long_totals$year), by=2) )+  
+  scale_y_continuous(labels = scales::comma) +             
+  theme_minimal()
+
+
+```
 
 
 ## Regression

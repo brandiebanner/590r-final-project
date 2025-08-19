@@ -69,8 +69,104 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="description-of-data" class="level2">
-<h2 class="anchored" data-anchor-id="description-of-data">Description of Data</h2>
+<section id="introduction-to-data" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-data">Introduction to data</h2>
+<p>This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRWA, and the IDMC, but I downloaded it from TidyTuesday.</p>
+<p><em>A quick brief on terminology:</em></p>
+<p>-Asylum seeker: a person who has applied or attends to apply for refugee status.</p>
+<p>-Refugee: someone who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).</p>
+<p>-Internally displaced person (IDP): a person displaced within their home country (for any reason, including disasters).</p>
+</section>
+<section id="displacement-over-time" class="level2">
+<h2 class="anchored" data-anchor-id="displacement-over-time">Displacement over time</h2>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      year        coo_name             coo              coo_iso         
+ Min.   :2010   Length:64809       Length:64809       Length:64809      
+ 1st Qu.:2013   Class :character   Class :character   Class :character  
+ Median :2017   Mode  :character   Mode  :character   Mode  :character  
+ Mean   :2016                                                           
+ 3rd Qu.:2020                                                           
+ Max.   :2022                                                           
+                                                                        
+   coa_name             coa              coa_iso             refugees      
+ Length:64809       Length:64809       Length:64809       Min.   :      0  
+ Class :character   Class :character   Class :character   1st Qu.:      5  
+ Mode  :character   Mode  :character   Mode  :character   Median :     12  
+                                                          Mean   :   3440  
+                                                          3rd Qu.:     88  
+                                                          Max.   :3737369  
+                                                                           
+ asylum_seekers     returned_refugees        idps         returned_idps      
+ Min.   :     0.0   Min.   :     0.00   Min.   :      0   Min.   :      0.0  
+ 1st Qu.:     0.0   1st Qu.:     0.00   1st Qu.:      0   1st Qu.:      0.0  
+ Median :     8.0   Median :     0.00   Median :      0   Median :      0.0  
+ Mean   :   564.2   Mean   :    73.48   Mean   :   7089   Mean   :    706.2  
+ 3rd Qu.:    57.0   3rd Qu.:     0.00   3rd Qu.:      0   3rd Qu.:      0.0  
+ Max.   :940668.0   Max.   :381275.00   Max.   :8252788   Max.   :2134349.0  
+                                                                             
+   stateless             ooc                 oip               hst          
+ Min.   :     0.0   Min.   :      0.0   Min.   :      5   Min.   :       0  
+ 1st Qu.:     0.0   1st Qu.:      0.0   1st Qu.:   8218   1st Qu.:       0  
+ Median :     0.0   Median :      0.0   Median :  23165   Median :       0  
+ Mean   :   756.6   Mean   :    437.5   Mean   : 196611   Mean   :    6265  
+ 3rd Qu.:     0.0   3rd Qu.:      0.0   3rd Qu.: 164760   3rd Qu.:       0  
+ Max.   :955399.0   Max.   :3206577.0   Max.   :2453862   Max.   :15209720  
+                                        NA's   :64709     NA's   :58845     </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 222943825</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36563042</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 459411328</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      year         refugees            asylum             idps         
+ Min.   :2010   Min.   :10403937   Min.   : 835969   Min.   :14697804  
+ 1st Qu.:2013   1st Qu.:11698233   1st Qu.:1162934   1st Qu.:23925555  
+ Median :2016   Median :17184286   Median :3089507   Median :37494172  
+ Mean   :2016   Mean   :17149525   Mean   :2812542   Mean   :35339333  
+ 3rd Qu.:2019   3rd Qu.:20414669   3rd Qu.:4148141   3rd Qu.:43503362  
+ Max.   :2022   Max.   :29413033   Max.   :5438929   Max.   :57321197  </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 222943825</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36563042</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 459411328</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Displacement-Analysis-EPI590R-Shackelford_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="regression" class="level2">
 <h2 class="anchored" data-anchor-id="regression">Regression</h2>
