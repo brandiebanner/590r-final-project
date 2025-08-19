@@ -6,6 +6,8 @@ format:
     theme: slate
 execute:
   echo: false
+  warning: false
+  message: false
 ---
 
 
@@ -31,24 +33,28 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 year <- displaced |> group_by(year) |> summarise(refugees = sum(refugees, na.rm = TRUE), asylum = sum(asylum_seekers, na.rm = TRUE), idps = sum(idps, na.rm = TRUE))
-summary(displaced)
-sum(displaced$refugees)
-sum(displaced$asylum_seekers)
-sum(displaced$idps)
-summary(year)
-sum(year$refugees)
-sum(year$asylum)
-sum(year$idps)
+# sum(displaced$refugees)
+# sum(displaced$asylum_seekers)
+# sum(displaced$idps)
+# sum(year$refugees)
+# sum(year$asylum)
+# sum(year$idps)
 
 long_totals <- year %>%
   pivot_longer(cols = c(refugees, asylum, idps),
                names_to = "type",
                values_to = "count")
+```
 
+The number of displaced people globally has increased substantially between 2010 and 2022 (@fig-time).
+
+
+```{r}
+#| label: fig-time
+#| fig-cap: "Displacement Trends, 2010-2022"
 ggplot(long_totals, aes(x = year, y = count, color = type)) +
   geom_line(size = 1) +
   labs(
-    title = "Displacement Trends, 2010-2022",
     x = "Year",
     y = "Number of People",
     color = "Displacement Type"
@@ -57,8 +63,20 @@ ggplot(long_totals, aes(x = year, y = count, color = type)) +
   breaks = seq(min(long_totals$year), max(long_totals$year), by=2) )+  
   scale_y_continuous(labels = scales::comma) +             
   theme_minimal()
+```
 
 
+## Country of Origin and Asylum
+@tbl-coo shows the country of origin of refugees.
+
+```{r}
+library(gtsummary)
+#| label: tbl-coo
+#| tbl-cap: "Refugees by country of origin"
+tbl_summary(
+  displaced,
+  by = coo_region,
+  include = c(asylum_seekers, refugees, idps))
 ```
 
 
