@@ -78,7 +78,18 @@ library(gtsummary)
 tbl_summary(
   displaced,
   by = coo_region,
-  include = c(`Asylum Seekers`, Refugees))
+  include = c(Asylum_Seekers, Refugees))
 ```
 
 ## Regression
+@tbl-regression shows the results of a regression that XYZ refugees fled from between 2010 and 2022.
+
+```{r}
+library(gtsummary)
+#| label: tbl-regression
+#| tbl-cap: "Country of origin of refugees and IDPs"
+tbl_summary(
+  displaced,
+  by = coo_region,
+  include = c(Asylum_Seekers, Refugees))
+```
