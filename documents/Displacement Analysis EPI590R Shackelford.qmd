@@ -10,29 +10,32 @@ execute:
   message: false
 ---
 
-
-```{r}
-displaced <- readRDS(here::here("data", "refugees.rds"))
-```
-
-## Introduction to data
-This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRWA, and the IDMC, but I downloaded it from TidyTuesday.
-
-*A quick brief on terminology:*
-
--Asylum seeker: a person who has applied or attends to apply for refugee status.
-
--Refugee: someone who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).
-
--Internally displaced person (IDP): a person displaced within their home country (for any reason, including disasters).
-
-## Displacement over time
-
 ```{r}
 library(ggplot2)
 library(dplyr)
 library(tidyr)
-year <- displaced |> group_by(year) |> summarise(refugees = sum(refugees, na.rm = TRUE), asylum = sum(asylum_seekers, na.rm = TRUE), idps = sum(idps, na.rm = TRUE))
+displaced <- readRDS(here::here("data", "refugees.rds"))
+displaced <- displaced |> mutate(`Asylum Seekers` = asylum_seekers ,
+										Refugees = refugees,
+										IDPs = idps)
+```
+
+## Introduction to data
+
+This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRWA, and the IDMC, but I downloaded it from TidyTuesday.
+
+*A quick brief on terminology:*
+
+\-**Asylum seeker**: a person who has applied or attends to apply for refugee status.
+
+\-**Refugee**: someone who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).
+
+\-**Internally displaced person (IDP)**: a person displaced within their home country (for any reason, including disasters).
+
+## Displacement over time
+
+```{r}
+year <- displaced |> group_by(year) |> summarise(Refugees = sum(refugees, na.rm = TRUE), `Asylum Seekers` = sum(asylum_seekers, na.rm = TRUE), IDPs = sum(idps, na.rm = TRUE))
 # sum(displaced$refugees)
 # sum(displaced$asylum_seekers)
 # sum(displaced$idps)
@@ -41,13 +44,12 @@ year <- displaced |> group_by(year) |> summarise(refugees = sum(refugees, na.rm 
 # sum(year$idps)
 
 long_totals <- year %>%
-  pivot_longer(cols = c(refugees, asylum, idps),
+  pivot_longer(cols = c(Refugees, `Asylum Seekers`, IDPs),
                names_to = "type",
                values_to = "count")
 ```
 
 The number of displaced people globally has increased substantially between 2010 and 2022 (@fig-time).
-
 
 ```{r}
 #| label: fig-time
@@ -65,21 +67,18 @@ ggplot(long_totals, aes(x = year, y = count, color = type)) +
   theme_minimal()
 ```
 
-
 ## Country of Origin and Asylum
-@tbl-coo shows the country of origin of refugees.
+
+@tbl-coo shows the regions refugees fled from between 2010 and 2022.
 
 ```{r}
 library(gtsummary)
 #| label: tbl-coo
-#| tbl-cap: "Refugees by country of origin"
+#| tbl-cap: "Country of origin of refugees and IDPs"
 tbl_summary(
   displaced,
   by = coo_region,
-  include = c(asylum_seekers, refugees, idps))
+  include = c(`Asylum Seekers`, Refugees))
 ```
 
-
 ## Regression
-
-
