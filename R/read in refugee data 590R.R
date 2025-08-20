@@ -2,12 +2,13 @@
 refugees <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2023/2023-08-22/population.csv')
 
 #https://github.com/rfordatascience/tidytuesday/blob/main/data/2023/2023-08-22/readme.md
-readr::write_rds(refugees, here::here("data", "refugees.rds"))
 
 levels(factor(refugees$coo_name))
 
-#code regions
+#code regions - didn't end up using this
 library(countrycode)
+
+sum(refugees$refugees)
 
 manuallycode <- c(
 	"Stateless" = NA,
@@ -39,3 +40,7 @@ refugees$coo_region[non_manual_idx] <- countrycode(
 refugees$coo_region[is.na(refugees$coo_region)] <- "Unknown"
 
 table(refugees$coo_region)
+
+
+
+saveRDS(refugees, here::here("data", "refugees.rds"))

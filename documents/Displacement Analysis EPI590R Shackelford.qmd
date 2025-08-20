@@ -51,7 +51,7 @@ long_totals <- year %>%
                values_to = "count")
 ```
 
-The number of displaced people globally has increased substantially between 2010 and 2022 (@fig-time).
+The number of displaced people globally increased substantially between 2010 and 2022 (@fig-time).
 
 ```{r}
 #| label: fig-time
@@ -87,7 +87,7 @@ displaced_summarized <- displaced |>
 @tbl-coo shows the average number of refugees and asylum seekers per country of origin for the years between 2010 and 2022.
 ```{r}
 #| label: tbl-coo 
-#| tbl-cap: "Refugees and asylum seekers per country of origin by year"
+#| tbl-cap: "Refugees and asylum seekers per country of origin, stratified by year"
 tbl_summary(
   displaced_summarized,
   by = year,
@@ -104,6 +104,7 @@ tbl_summary(
 ## Regression
 ```{r}
 #| message: false
+#| 
 #function to calculate refugees + asylum seekers
 total_all <- function(x, y){
 	total = x+y
@@ -122,10 +123,11 @@ displaced_summarized <- displaced_summarized |>
 
 ```
 
-@tbl-regression shows the results of regressing the number of returnees per country between 2010 and 2022 on the number of refugees and number of refugees and asylum seekers.
+@tbl-regression presents results from simple linear regressions predicting the number of returnees per country between 2010 and 2022, using the number of refugees or the combined number of refugees and asylum seekers as predictors.
+
 ```{r}
 #| label: tbl-regression
-#| tbl-cap: "Results of simple linear regression for predicting number of returnees"
+#| tbl-cap: "Simple linear regression results predicting returnee counts (2010–2022) by country, "
 
 tbl_uvregression(
   displaced_summarized, 
