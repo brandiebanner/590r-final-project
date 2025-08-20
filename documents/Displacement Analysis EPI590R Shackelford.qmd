@@ -22,13 +22,13 @@ displaced <- displaced |> mutate(Asylum_Seekers = asylum_seekers ,
 
 ## Introduction to data
 
-This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRWA, and the IDMC, but I downloaded it from TidyTuesday.
+This is data on global forced displacement between 2010 and 2022. The data is from the United Nations High Commissioner for Refugees (UNHCR), the United Nations Relief and Works Agency (UNRWA), and the International Displacement Monitoring Centre (IDMC), but I downloaded it from TidyTuesday.
 
 *A quick brief on terminology:*
 
 \-**Asylum seeker**: a person who has applied or attends to apply for refugee status.
 
-\-**Refugee**: someone who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).
+\-**Refugee**: a person who has been forced to flee across an international border to seek safety (owing to well-founded fear of being persecuted for reasons of race, religion, nationality, membership of a particular social group or political opinion).
 
 \-**Internally displaced person (IDP)**: a person displaced within their home country (for any reason, including disasters).
 
@@ -45,7 +45,7 @@ year <- displaced |> group_by(year) |> summarise(Refugees = sum(refugees, na.rm 
 # sum(year$asylum)
 # sum(year$idps)
 
-long_totals <- year %>%
+long_totals <- year |>
   pivot_longer(cols = c(Refugees, Asylum_Seekers, IDPs),
                names_to = "type",
                values_to = "count")
@@ -86,9 +86,11 @@ displaced_summarized <- displaced |>
 
 @tbl-coo shows the average number of refugees and asylum seekers per country of origin for the years between 2010 and 2022 (inclusive). In 2010, there were `r nrow(subset(displaced_summarized, year == 2010))` countries people fled from, while in 2022 there were `r nrow(subset(displaced_summarized, year == 2022))` countries.
 
+
 ```{r}
 #| label: tbl-coo 
 #| tbl-cap: "Refugees and asylum seekers per country of origin, stratified by year"
+
 tbl_summary(
   displaced_summarized,
   by = year,
@@ -100,15 +102,14 @@ tbl_summary(
   )
 ) |> modify_footnote(update = everything() ~ NA)
 
-
-
 ```
 
 
 ## Regression
 ```{r}
 #| message: false
-#| 
+
+
 #function to calculate refugees + asylum seekers
 total_all <- function(x, y){
 	total = x+y
@@ -127,13 +128,14 @@ displaced_summarized <- displaced_summarized |>
 
 ```
 
-@tbl_regression presents results from simple linear regressions predicting the number of returnees per country between 2010 and 2022, using the number of refugees or the combined number of refugees and asylum seekers as predictors.
+@tbl-regression presents results from simple linear regressions predicting the number of returnees per country between 2010 and 2022, using the number of refugees or the combined number of refugees and asylum seekers as predictors.
+
 
 ```{r}
-#| label: tbl_regression
-#| tbl-cap: "Simple linear regression results predicting returnee counts (2010–2022) by country, "
+#| label: tbl-regression
+#| tbl-cap: "Simple linear regression results predicting returnee counts (2010–2022) by country"
 
-tbl_uvregression(
+regression <- tbl_uvregression(
   displaced_summarized, 
   y = total_returnee,
   include = c(total_refugees, total),
@@ -141,5 +143,9 @@ tbl_uvregression(
     total_refugees ~ "Number of refugees only",
     total ~ "Number of refugees and asylum seekers"),
   method = lm)
+
+regression
 ```
+
+Both results were statistically significant; the beta for the model with only refugees was `r inline_text(regression, variable = "total_refugees")`, while the beta for the model with both refugees and asylum seekers was `r inline_text(regression, variable = "total")`.
 
