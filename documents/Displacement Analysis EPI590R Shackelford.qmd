@@ -32,6 +32,8 @@ This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRW
 
 \-**Internally displaced person (IDP)**: a person displaced within their home country (for any reason, including disasters).
 
+\-**Returnee**: a person who was previously fled their home country that has returned.
+
 ## Displacement over time
 
 ```{r}
@@ -72,12 +74,13 @@ ggplot(long_totals, aes(x = year, y = count, color = type)) +
 ```{r}
 #| message: false
 library(gtsummary)
-displaced_summarized <- displaced %>%
-  group_by(coo_name, year) %>%
+displaced_summarized <- displaced |>
+  group_by(coo_name, year) |>
   summarise(
     total_refugees = sum(Refugees, na.rm = TRUE),
     total_asylum_seekers = sum(Asylum_Seekers, na.rm = TRUE),
-    .groups = "drop"
+    total_returnee = sum(returned_refugees, na.rm = TRUE),
+        .groups = "drop"
   ) 
 ```
 
@@ -99,14 +102,38 @@ tbl_summary(
 
 
 ## Regression
-@tbl-regression shows the results of a regression that XYZ refugees fled from between 2010 and 2022.
+```{r}
+#| message: false
+#function to calculate refugees + asylum seekers
+total_all <- function(x, y){
+	total = x+y
+	return(total)
+}
+
+displaced_summarized <- displaced_summarized |>
+  mutate(total = total_all(total_refugees, total_asylum_seekers))
+
+#linear model
+# linearrefugee <- lm(total_returnee ~ total_refugees, data =
+# 											displaced_summarized)
+# 
+# linearboth <- lm(total_returnee ~ total, data = 
+# 								 	displaced_summarized)
+
+```
+
+@tbl-regression shows the results of regressing the number of returnees per country between 2010 and 2022 on the number of refugees and number of refugees and asylum seekers.
 ```{r}
 #| label: tbl-regression
-#| tbl-cap: "Country of origin of refugees and IDPs"
+#| tbl-cap: "Results of simple linear regression for predicting number of returnees"
 
-tbl_summary(
-  displaced,
-  by = coo_region,
-  include = c(Asylum_Seekers, Refugees))
+tbl_uvregression(
+  displaced_summarized, 
+  y = total_returnee,
+  include = c(total_refugees, total),
+  label = list(
+    total_refugees ~ "Number of refugees only",
+    total ~ "Number of refugees and asylum seekers"),
+  method = lm)
 ```
 
