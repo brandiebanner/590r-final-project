@@ -15,7 +15,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 displaced <- readRDS(here::here("data", "refugees.rds"))
-displaced <- displaced |> mutate(`Asylum Seekers` = asylum_seekers ,
+displaced <- displaced |> mutate(Asylum_Seekers = asylum_seekers ,
 										Refugees = refugees,
 										IDPs = idps)
 ```
@@ -35,7 +35,7 @@ This is data on displacement between 2010 and 2022. The data is from UNHCR, UNRW
 ## Displacement over time
 
 ```{r}
-year <- displaced |> group_by(year) |> summarise(Refugees = sum(refugees, na.rm = TRUE), `Asylum Seekers` = sum(asylum_seekers, na.rm = TRUE), IDPs = sum(idps, na.rm = TRUE))
+year <- displaced |> group_by(year) |> summarise(Refugees = sum(refugees, na.rm = TRUE), Asylum_Seekers = sum(asylum_seekers, na.rm = TRUE), IDPs = sum(idps, na.rm = TRUE))
 # sum(displaced$refugees)
 # sum(displaced$asylum_seekers)
 # sum(displaced$idps)
@@ -44,7 +44,7 @@ year <- displaced |> group_by(year) |> summarise(Refugees = sum(refugees, na.rm 
 # sum(year$idps)
 
 long_totals <- year %>%
-  pivot_longer(cols = c(Refugees, `Asylum Seekers`, IDPs),
+  pivot_longer(cols = c(Refugees, Asylum_Seekers, IDPs),
                names_to = "type",
                values_to = "count")
 ```
@@ -67,29 +67,46 @@ ggplot(long_totals, aes(x = year, y = count, color = type)) +
   theme_minimal()
 ```
 
-## Country of Origin and Asylum
-
-@tbl-coo shows the regions refugees fled from between 2010 and 2022.
+## Refugees and asylum seekers per country of origin, by year
 
 ```{r}
+#| message: false
 library(gtsummary)
-#| label: tbl-coo
-#| tbl-cap: "Country of origin of refugees and IDPs"
-tbl_summary(
-  displaced,
-  by = coo_region,
-  include = c(Asylum_Seekers, Refugees))
+displaced_summarized <- displaced %>%
+  group_by(coo_name, year) %>%
+  summarise(
+    total_refugees = sum(Refugees, na.rm = TRUE),
+    total_asylum_seekers = sum(Asylum_Seekers, na.rm = TRUE),
+    .groups = "drop"
+  ) 
 ```
+
+@tbl-coo shows the average number of refugees and asylum seekers per country of origin for the years between 2010 and 2022.
+```{r}
+#| label: tbl-coo 
+#| tbl-cap: "Refugees and asylum seekers per country of origin by year"
+tbl_summary(
+  displaced_summarized,
+  by = year,
+  include = c(total_refugees, total_asylum_seekers),
+  statistic = all_continuous() ~ "{median} ({p25}, {p75})",
+  label = list(
+    total_refugees = "Refugees",
+    total_asylum_seekers = "Asylum Seekers"
+  )
+) |> modify_footnote(update = everything() ~ NA)
+```
+
 
 ## Regression
 @tbl-regression shows the results of a regression that XYZ refugees fled from between 2010 and 2022.
-
 ```{r}
-library(gtsummary)
 #| label: tbl-regression
 #| tbl-cap: "Country of origin of refugees and IDPs"
+
 tbl_summary(
   displaced,
   by = coo_region,
   include = c(Asylum_Seekers, Refugees))
 ```
+
